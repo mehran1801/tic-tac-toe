@@ -31,8 +31,11 @@ document.addEventListener('click',e=>{
         const cellValue = target.dataset.value;
         if(game.xTurn){
             game.xState.push(cellValue)
+            console.log("xState is "+ game.xState);
         }else{
             game.oState.push(cellValue)
+            console.log("oState is "+game.oState);
+
         }
         target.classList.add('disabled')
         target.classList.add(game.xTurn ? 'x' : 'o')
@@ -45,7 +48,29 @@ document.addEventListener('click',e=>{
             document.querySelector('.game-over-text').innerHTML = 'Draw!'
         }
         // check for wins
+        game.winningStates.forEach(winningState => {
+            const xWins = winningState.every(state => game.xState.includes(state))
+            const oWins = winningState.every(state => game.oState.includes(state))
+          
+            if (xWins || oWins) {
+                document.querySelectorAll('.grid-cell').forEach(cell => cell.classList.add('disabled'))
+                document.querySelector('.game-over').classList.add('visible')
+                document.querySelector('.game-over-text').textContent = xWins
+                    ? 'X wins!'
+                    : 'O wins!'
+            }
+        })
+        // restarting the game
+        document.querySelector('.restart').addEventListener('click', () => {
+            document.querySelector('.game-over').classList.remove('visible')
+            document.querySelectorAll('.grid-cell').forEach(cell => {
+                cell.classList.remove('disabled', 'x', 'o')
+            })
         
+            game.xTurn = true
+            game.xState = []
+            game.oState = []
+        })
     }
 
 })
